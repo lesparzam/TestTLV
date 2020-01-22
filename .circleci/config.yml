@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  build-go1.11.4:
+  build-go1.13.6:
     docker:
       - image: circleci/golang:1.13.6
     working_directory: /go/src/github.com/lesparzam/TestTLV
