@@ -7,6 +7,7 @@ jobs:
     steps:
       - checkout
       - run: go test -v -race ./...
+      - run: go run src/main.go 
       - run: go build -race src/main.go 
 workflows:
   version: 2
