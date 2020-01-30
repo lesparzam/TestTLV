@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"regexp"
 	"strconv"
 )
@@ -25,17 +24,8 @@ const (
 
 func main() {
 
-	tlvStr := "11A05AB398765UJ102N2300"
-	fmt.Println("TLV ingresado string: ", tlvStr)
+	fmt.Println("TLV Out: ", LeerTlv([]byte{49, 49, 65, 48, 53, 65, 66, 51, 57, 56, 55, 54, 53, 85, 74, 49, 48, 50, 78, 50, 51, 48, 48}))
 
-	tlvByte := []byte(tlvStr)
-	fmt.Println("TLV ingresado byte: ", tlvByte)
-
-	tlv := []byte{49, 49, 65, 48, 53, 65, 66, 51, 57, 56, 55, 54, 53, 85, 74, 49, 48, 50, 78, 50, 51, 48, 48}
-
-	result := LeerTlv(tlv)
-	fmt.Println("TLV : ", result)
-	//fmt.Println("TLV : ", reflect.ValueOf(result[0].TLV))
 }
 
 func LeerTlv(tlv []byte) []ResultTLV {
@@ -118,12 +108,7 @@ func ErrorTLV(err string) ResultTLV {
 
 func EsValidoLargoTLV(largoTlv string) bool {
 	esValido := true
-	if len(largoTlv) < 2 {
-		fmt.Println("El Largo del TLV es menor a 2: ", len(largoTlv))
-		esValido = false
-	}
 	if !EsNumero(largoTlv) {
-		fmt.Println("El Largo del TLV no es un número: ", largoTlv)
 		esValido = false
 	}
 	return esValido
@@ -161,10 +146,6 @@ func EsValidoValorNumericoTLV(valorTlv string) bool {
 	return esValido
 }
 
-func Salir() {
-	os.Exit(0)
-}
-
 func EsNumero(s string) bool {
 	re := regexp.MustCompile(`^\d*$`)
 	return re.MatchString(s)
@@ -184,8 +165,7 @@ func EsAlfanumerico(s string) bool {
 func StringToInt(s string) int {
 	i, err := strconv.Atoi(s)
 	if err != nil {
-		fmt.Println(err)
-		Salir()
+		return -1
 	}
 	return i
 }
