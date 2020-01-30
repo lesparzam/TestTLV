@@ -57,7 +57,7 @@ func LeerTlv(tlv []byte) []ResultTLV {
 
 				tipoDatoTlv := string(tlv[i+2 : i+3])
 				if !EsValidoTipoDatoTLV(tipoDatoTlv) {
-					result := ErrorTLV("No es valido el Tipo dato TLV: " + tipoDatoTlv)
+					result := ErrorTLV("No es valido el Tipo dato TLV")
 					resultTlv = append(resultTlv, result)
 					fmt.Println("No es valido el Tipo dato TLV: ", tipoDatoTlv)
 					break
@@ -65,7 +65,7 @@ func LeerTlv(tlv []byte) []ResultTLV {
 
 				numeroCampoTlv := string(tlv[i+3 : i+5])
 				if !EsValidoTipoCampoTLV(numeroCampoTlv) {
-					result := ErrorTLV("El numero de campo de tipo del TLV no es un número: " + numeroCampoTlv)
+					result := ErrorTLV("El numero de campo de tipo del TLV no es un número")
 					resultTlv = append(resultTlv, result)
 					fmt.Println("El numero de campo de tipo del TLV no es un número: ", numeroCampoTlv)
 					break
@@ -74,7 +74,7 @@ func LeerTlv(tlv []byte) []ResultTLV {
 				valorTlv := string(tlv[i+5 : i+5+StringToInt(largoTlv)])
 				if tipoDatoTlv == "A" {
 					if !EsValidoValorAlfanumericoTLV(valorTlv) {
-						result := ErrorTLV("El valor del TLV no es alfanumérico: " + valorTlv)
+						result := ErrorTLV("El valor del TLV no es alfanumérico")
 						resultTlv = append(resultTlv, result)
 						fmt.Println("El valor del TLV no es alfanumérico: ", valorTlv)
 						break
@@ -83,7 +83,7 @@ func LeerTlv(tlv []byte) []ResultTLV {
 
 				if tipoDatoTlv == "N" {
 					if !EsValidoValorNumericoTLV(valorTlv) {
-						result := ErrorTLV("El valor del TLV no es numérico: " + valorTlv)
+						result := ErrorTLV("El valor del TLV no es numérico")
 						resultTlv = append(resultTlv, result)
 						fmt.Println("El valor del TLV no es numérico: ", valorTlv)
 						break
