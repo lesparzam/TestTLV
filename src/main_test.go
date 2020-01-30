@@ -211,3 +211,23 @@ func TestEsAlfanumerico(t *testing.T) {
 		}
 	}
 }
+
+func TestStringToIntValidoNoValido(t *testing.T) {
+
+	fmt.Println("----- TestStringToIntValidoNoValido")
+
+	for _, c := range []struct {
+		ingresa string
+		espera  int
+	}{
+		{"123456789", 123456789},
+		{"1Q2W3E4R", -1},
+		{"1-", -1},
+	} {
+		result := StringToInt(c.ingresa)
+
+		if result != c.espera {
+			t.Errorf("EsAlfanumerico(%q) == %v, espera %v", c.ingresa, result, c.espera)
+		}
+	}
+}
