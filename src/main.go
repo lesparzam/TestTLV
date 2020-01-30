@@ -12,6 +12,17 @@ type ResultTLV struct {
 	Error string
 }
 
+const (
+	MensajeErrorLargoTLV                     = "Error en el largo del TLV"
+	MensajeErrorTLVNoCumpleLongitudMinima    = "El tlv no cumple con la logitud mínima"
+	MensajeErrorNoEsValidoTipoDatoTLV        = "No es válido el Tipo dato TLV"
+	MensajeErrorNumeroCampoTipoTLVNoEsNumero = "El número de campo de tipo del TLV no es un número"
+	MensajeErrorElValorTLVNoEsAlfanumerico   = "El valor del TLV no es alfanumérico"
+	MensajeErrorElValorTLVNoEsNumerico       = "El valor del TLV no es númerico"
+	MensajeErrorEstructuraTLVNoValida        = "Estructura del TLV no válida"
+	MensajeErrorOk                           = "Sin error"
+)
+
 func main() {
 
 	tlvStr := "11A05AB398765UJ102N2300"
@@ -32,9 +43,8 @@ func LeerTlv(tlv []byte) []ResultTLV {
 	resultTlv := []ResultTLV{}
 
 	if len(tlv) < 6 || len(tlv) == 0 {
-		result := ErrorTLV("El tlv no cumple con la logitud mínima")
-		resultTlv = append(resultTlv, result)
-		fmt.Println("El tlv no cumple con la logitud mínima", len(tlv))
+		resultTlv = append(resultTlv, ErrorTLV(MensajeErrorTLVNoCumpleLongitudMinima))
+		fmt.Println(MensajeErrorTLVNoCumpleLongitudMinima, ": ", len(tlv))
 		return resultTlv
 	}
 
@@ -44,9 +54,7 @@ func LeerTlv(tlv []byte) []ResultTLV {
 
 			largoTlv := string(tlv[i : i+2])
 			if !EsValidoLargoTLV(largoTlv) {
-				result := ErrorTLV("Error en el largo del TLV")
-				resultTlv = append(resultTlv, result)
-				fmt.Println("Error en el largo del TLV 2")
+				resultTlv = append(resultTlv, ErrorTLV(MensajeErrorLargoTLV))
 				break
 			}
 
@@ -57,35 +65,31 @@ func LeerTlv(tlv []byte) []ResultTLV {
 
 				tipoDatoTlv := string(tlv[i+2 : i+3])
 				if !EsValidoTipoDatoTLV(tipoDatoTlv) {
-					result := ErrorTLV("No es valido el Tipo dato TLV")
-					resultTlv = append(resultTlv, result)
-					fmt.Println("No es valido el Tipo dato TLV: ", tipoDatoTlv)
+					resultTlv = append(resultTlv, ErrorTLV(MensajeErrorNoEsValidoTipoDatoTLV))
+					fmt.Println(MensajeErrorNoEsValidoTipoDatoTLV, ": ", tipoDatoTlv)
 					break
 				}
 
 				numeroCampoTlv := string(tlv[i+3 : i+5])
 				if !EsValidoTipoCampoTLV(numeroCampoTlv) {
-					result := ErrorTLV("El numero de campo de tipo del TLV no es un número")
-					resultTlv = append(resultTlv, result)
-					fmt.Println("El numero de campo de tipo del TLV no es un número: ", numeroCampoTlv)
+					resultTlv = append(resultTlv, ErrorTLV(MensajeErrorNumeroCampoTipoTLVNoEsNumero))
+					fmt.Println(MensajeErrorNumeroCampoTipoTLVNoEsNumero, ": ", numeroCampoTlv)
 					break
 				}
 
 				valorTlv := string(tlv[i+5 : i+5+StringToInt(largoTlv)])
 				if tipoDatoTlv == "A" {
 					if !EsValidoValorAlfanumericoTLV(valorTlv) {
-						result := ErrorTLV("El valor del TLV no es alfanumérico")
-						resultTlv = append(resultTlv, result)
-						fmt.Println("El valor del TLV no es alfanumérico: ", valorTlv)
+						resultTlv = append(resultTlv, ErrorTLV(MensajeErrorElValorTLVNoEsAlfanumerico))
+						fmt.Println(MensajeErrorElValorTLVNoEsAlfanumerico, ": ", valorTlv)
 						break
 					}
 				}
 
 				if tipoDatoTlv == "N" {
 					if !EsValidoValorNumericoTLV(valorTlv) {
-						result := ErrorTLV("El valor del TLV no es numérico")
-						resultTlv = append(resultTlv, result)
-						fmt.Println("El valor del TLV no es numérico: ", valorTlv)
+						resultTlv = append(resultTlv, ErrorTLV(MensajeErrorElValorTLVNoEsNumerico))
+						fmt.Println(MensajeErrorElValorTLVNoEsNumerico, ": ", valorTlv)
 						break
 					}
 				}
@@ -94,14 +98,12 @@ func LeerTlv(tlv []byte) []ResultTLV {
 				i += StringToInt(largoTlv) + 4
 
 				tlvOut := map[string]string{"largo": largoTlv, "tipoDato": tipoDatoTlv, "numeroCampo": numeroCampoTlv, "valor": valorTlv}
-				result := ResultTLV{tlvOut, "Sin error"}
-				resultTlv = append(resultTlv, result)
+				resultTlv = append(resultTlv, ResultTLV{tlvOut, MensajeErrorOk})
 
 			} else {
 
-				result := ErrorTLV("Estructura del TLV no válida.")
-				resultTlv = append(resultTlv, result)
-				fmt.Println("Estructura del TLV no válida.", resultTlv)
+				resultTlv = append(resultTlv, ErrorTLV(MensajeErrorEstructuraTLVNoValida))
+				fmt.Println(MensajeErrorEstructuraTLVNoValida, resultTlv)
 				break
 			}
 		}
@@ -130,7 +132,6 @@ func EsValidoLargoTLV(largoTlv string) bool {
 func EsValidoTipoDatoTLV(tipoDatoTlv string) bool {
 	esValido := true
 	if !EsValidoTipoDato(tipoDatoTlv) {
-		fmt.Println("No es valido el Tipo dato TLV:", tipoDatoTlv)
 		esValido = false
 	}
 	return esValido
@@ -139,7 +140,6 @@ func EsValidoTipoDatoTLV(tipoDatoTlv string) bool {
 func EsValidoTipoCampoTLV(numeroCampoTlv string) bool {
 	esValido := true
 	if !EsNumero(numeroCampoTlv) {
-		fmt.Println("El numero de campo de tipo del TLV no es un número: ", numeroCampoTlv)
 		esValido = false
 	}
 	return esValido
@@ -148,7 +148,6 @@ func EsValidoTipoCampoTLV(numeroCampoTlv string) bool {
 func EsValidoValorAlfanumericoTLV(valorTlv string) bool {
 	esValido := true
 	if !EsAlfanumerico(valorTlv) {
-		fmt.Println("El valor del TLV no es alfanumérico: ", valorTlv)
 		esValido = false
 	}
 	return esValido
@@ -157,7 +156,6 @@ func EsValidoValorAlfanumericoTLV(valorTlv string) bool {
 func EsValidoValorNumericoTLV(valorTlv string) bool {
 	esValido := true
 	if !EsNumero(valorTlv) {
-		fmt.Println("El valor del TLV no es numérico: ", valorTlv)
 		esValido = false
 	}
 	return esValido
