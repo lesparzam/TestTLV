@@ -11,9 +11,9 @@ import (
 	os.Exit(m.Run())
 }*/
 
-func TestLeerTlv(t *testing.T) {
+func TestLeerTlvCorrecto(t *testing.T) {
 
-	fmt.Println("----- INICIO TestLeerTlv")
+	fmt.Println("----- TestLeerTlvCorrecto")
 
 	resultTlv := []ResultTLV{}
 	tlvIngresarByte := []byte{49, 49, 65, 48, 53, 65, 66, 51, 57, 56, 55, 54, 53, 85, 74, 49, 48, 50, 78, 50, 51, 48, 48} //11A05AB398765UJ102N2300
@@ -42,13 +42,11 @@ func TestLeerTlv(t *testing.T) {
 			}
 		}
 	}
-
-	fmt.Println("----- FIN TestLeerTlv")
 }
 
-func TestLeerTlv2(t *testing.T) {
+func TestLeerTlvEstructuraNoEsValida(t *testing.T) {
 
-	fmt.Println("----- INICIO TestLeerTlv2")
+	fmt.Println("----- TestLeerTlvEstructuraNoEsValida")
 
 	tlvEspera := []ResultTLV{}
 	tlvIngresarByte := []byte{49, 49, 65, 48, 53, 65} //11A05A
@@ -62,23 +60,16 @@ func TestLeerTlv2(t *testing.T) {
 	}{
 		{tlvIngresarByte, tlvEspera},
 	} {
-
 		result := LeerTlv(c.ingresa)
-
-		fmt.Println("TLV RESULT: ", result[0].TLV)
-		fmt.Println("TLV ESPERA: ", c.espera[0].TLV)
-
 		if !reflect.DeepEqual(result[0].TLV, c.espera[0].TLV) {
 			t.Errorf("LeerTlv(%v) == %v, espera %v", c.ingresa, result, c.espera)
 		}
 	}
-
-	fmt.Println("----- FIN TestLeerTlv2")
 }
 
-func TestLeerTlv3(t *testing.T) {
+func TestLeerTlvLongitudNoEsValida(t *testing.T) {
 
-	fmt.Println("----- INICIO TestLeerTlv3")
+	fmt.Println("----- TestLeerTlvLongitudNoEsValida")
 
 	tlvEspera := []ResultTLV{}
 	tlvIngresarByte := []byte{49, 49, 65, 48, 53} //11A05
@@ -92,23 +83,131 @@ func TestLeerTlv3(t *testing.T) {
 	}{
 		{tlvIngresarByte, tlvEspera},
 	} {
-
 		result := LeerTlv(c.ingresa)
-
-		fmt.Println("TLV RESULT: ", result[0].TLV)
-		fmt.Println("TLV ESPERA: ", c.espera[0].TLV)
-
 		if !reflect.DeepEqual(result[0].TLV, c.espera[0].TLV) {
 			t.Errorf("LeerTlv(%v) == %v, espera %v", c.ingresa, result, c.espera)
 		}
 	}
+}
 
-	fmt.Println("----- FIN TestLeerTlv3")
+func TestLargoTLVNoEsValido(t *testing.T) {
+
+	fmt.Println("----- TestLargoTLVNoEsValido")
+
+	tlvEspera := []ResultTLV{}
+	tlvIngresarByte := []byte{49, 88, 65, 48, 53, 65, 66, 51, 57, 56, 55, 54, 53, 85, 74, 49, 48, 50, 78, 50, 51, 48, 48} //1XA05AB398765UJ102N2300
+
+	tlvIngresarMap := map[string]string{"largo": "", "numeroCampo": "", "tipoDato": "", "valor": ""}
+	tlvEspera = append(tlvEspera, ResultTLV{tlvIngresarMap, "Error en el largo del TLV"})
+
+	for _, c := range []struct {
+		ingresa []byte
+		espera  []ResultTLV
+	}{
+		{tlvIngresarByte, tlvEspera},
+	} {
+		result := LeerTlv(c.ingresa)
+		if !reflect.DeepEqual(result[0].TLV, c.espera[0].TLV) {
+			t.Errorf("LeerTlv(%v) == %v, espera %v", c.ingresa, result, c.espera)
+		}
+	}
+}
+
+func TestTipoDatoTLVNoEsValido(t *testing.T) {
+
+	fmt.Println("----- TestTipoDatoTLVNoEsValido")
+
+	tlvEspera := []ResultTLV{}
+	tlvIngresarByte := []byte{49, 49, 88, 48, 53, 88, 66, 51, 57, 56, 55, 54, 53, 85, 74, 49, 48, 50, 78, 50, 51, 48, 48} //11X05AB398765UJ102N2300
+
+	tlvIngresarMap := map[string]string{"largo": "", "numeroCampo": "", "tipoDato": "", "valor": ""}
+	tlvEspera = append(tlvEspera, ResultTLV{tlvIngresarMap, "No es valido el Tipo dato TLV"})
+
+	for _, c := range []struct {
+		ingresa []byte
+		espera  []ResultTLV
+	}{
+		{tlvIngresarByte, tlvEspera},
+	} {
+		result := LeerTlv(c.ingresa)
+		if !reflect.DeepEqual(result[0].TLV, c.espera[0].TLV) {
+			t.Errorf("LeerTlv(%v) == %v, espera %v", c.ingresa, result, c.espera)
+		}
+	}
+}
+
+func TestElNumeroCampoTipoTLVNoEsNumero(t *testing.T) {
+
+	fmt.Println("----- TestElNumeroCampoTipoTLVNoEsNumero")
+
+	tlvEspera := []ResultTLV{}
+	tlvIngresarByte := []byte{49, 49, 65, 88, 88, 88, 66, 51, 57, 56, 55, 54, 53, 85, 74, 49, 48, 50, 78, 50, 51, 48, 48} //11AXXAB398765UJ102N2300
+
+	tlvIngresarMap := map[string]string{"largo": "", "numeroCampo": "", "tipoDato": "", "valor": ""}
+	tlvEspera = append(tlvEspera, ResultTLV{tlvIngresarMap, "El numero de campo de tipo del TLV no es un número"})
+
+	for _, c := range []struct {
+		ingresa []byte
+		espera  []ResultTLV
+	}{
+		{tlvIngresarByte, tlvEspera},
+	} {
+		result := LeerTlv(c.ingresa)
+		if !reflect.DeepEqual(result[0].TLV, c.espera[0].TLV) {
+			t.Errorf("LeerTlv(%v) == %v, espera %v", c.ingresa, result, c.espera)
+		}
+	}
+}
+
+func TestElValorTLVNoEsAlfanumerico(t *testing.T) {
+
+	fmt.Println("----- TestElValorTLVNoEsAlfanumerico")
+
+	tlvEspera := []ResultTLV{}
+	tlvIngresarByte := []byte{49, 49, 65, 48, 53, 49, 50, 51, 52, 53, 54, 55, 56, 57, 49, 48, 48, 50, 78, 50, 51, 48, 48} //11A051234567891002N2300
+
+	tlvIngresarMap := map[string]string{"largo": "", "numeroCampo": "", "tipoDato": "", "valor": ""}
+	tlvEspera = append(tlvEspera, ResultTLV{tlvIngresarMap, "El valor del TLV no es alfanumérico"})
+
+	for _, c := range []struct {
+		ingresa []byte
+		espera  []ResultTLV
+	}{
+		{tlvIngresarByte, tlvEspera},
+	} {
+		result := LeerTlv(c.ingresa)
+		if !reflect.DeepEqual(result[0].TLV, c.espera[0].TLV) {
+			t.Errorf("LeerTlv(%v) == %v, espera %v", c.ingresa, result, c.espera)
+		}
+	}
+}
+
+func TestElValorTLVNoEsNumerico(t *testing.T) {
+
+	fmt.Println("----- TestElValorTLVNoEsNumerico")
+
+	tlvEspera := []ResultTLV{}
+	tlvIngresarByte := []byte{49, 49, 78, 48, 53, 65, 83, 68, 70, 71, 72, 74, 75, 76, 79, 73, 48, 50, 78, 50, 51, 48, 48} //11A051234567891002N2300
+
+	tlvIngresarMap := map[string]string{"largo": "", "numeroCampo": "", "tipoDato": "", "valor": ""}
+	tlvEspera = append(tlvEspera, ResultTLV{tlvIngresarMap, "El valor del TLV no es numérico"})
+
+	for _, c := range []struct {
+		ingresa []byte
+		espera  []ResultTLV
+	}{
+		{tlvIngresarByte, tlvEspera},
+	} {
+		result := LeerTlv(c.ingresa)
+		if !reflect.DeepEqual(result[0].TLV, c.espera[0].TLV) {
+			t.Errorf("LeerTlv(%v) == %v, espera %v", c.ingresa, result, c.espera)
+		}
+	}
 }
 
 func TestEsAlfanumerico(t *testing.T) {
 
-	fmt.Println("----- INICIO TestEsAlfanumerico")
+	fmt.Println("----- TestEsAlfanumerico")
 
 	for _, c := range []struct {
 		ingresa string
@@ -128,6 +227,4 @@ func TestEsAlfanumerico(t *testing.T) {
 			t.Errorf("EsAlfanumerico(%q) == %t, espera %t", c.ingresa, result, c.espera)
 		}
 	}
-
-	fmt.Println("----- FIN TestEsAlfanumerico")
 }
