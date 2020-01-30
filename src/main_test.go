@@ -6,10 +6,7 @@ import (
 	"testing"
 )
 
-/*func TestMain(m *testing.M) {
-	// call flag.Parse() here if TestMain uses flags
-	os.Exit(m.Run())
-}*/
+var tlvIngresarMap = map[string]string{"largo": "", "numeroCampo": "", "tipoDato": "", "valor": ""}
 
 func TestLeerTlvCorrecto(t *testing.T) {
 
@@ -19,10 +16,10 @@ func TestLeerTlvCorrecto(t *testing.T) {
 	tlvIngresarByte := []byte{49, 49, 65, 48, 53, 65, 66, 51, 57, 56, 55, 54, 53, 85, 74, 49, 48, 50, 78, 50, 51, 48, 48} //11A05AB398765UJ102N2300
 
 	tlvIngresarMap1 := map[string]string{"largo": "11", "numeroCampo": "05", "tipoDato": "A", "valor": "AB398765UJ1"}
-	resultTlv = append(resultTlv, ResultTLV{tlvIngresarMap1, "Sin error"})
+	resultTlv = append(resultTlv, ResultTLV{tlvIngresarMap1, MensajeErrorOk})
 
 	tlvIngresarMap2 := map[string]string{"largo": "02", "numeroCampo": "23", "tipoDato": "N", "valor": "00"}
-	resultTlv = append(resultTlv, ResultTLV{tlvIngresarMap2, "Sin error"})
+	resultTlv = append(resultTlv, ResultTLV{tlvIngresarMap2, MensajeErrorOk})
 
 	for _, c := range []struct {
 		ingresa []byte
@@ -50,9 +47,7 @@ func TestLeerTlvEstructuraNoEsValida(t *testing.T) {
 
 	tlvEspera := []ResultTLV{}
 	tlvIngresarByte := []byte{49, 49, 65, 48, 53, 65} //11A05A
-
-	tlvIngresarMap := map[string]string{"largo": "", "numeroCampo": "", "tipoDato": "", "valor": ""}
-	tlvEspera = append(tlvEspera, ResultTLV{tlvIngresarMap, "Estructura del TLV no válida."})
+	tlvEspera = append(tlvEspera, ResultTLV{tlvIngresarMap, MensajeErrorEstructuraTLVNoValida})
 
 	for _, c := range []struct {
 		ingresa []byte
@@ -73,9 +68,7 @@ func TestLeerTlvLongitudNoEsValida(t *testing.T) {
 
 	tlvEspera := []ResultTLV{}
 	tlvIngresarByte := []byte{49, 49, 65, 48, 53} //11A05
-
-	tlvIngresarMap := map[string]string{"largo": "", "numeroCampo": "", "tipoDato": "", "valor": ""}
-	tlvEspera = append(tlvEspera, ResultTLV{tlvIngresarMap, "El tlv no cumple con la logitud mínima"})
+	tlvEspera = append(tlvEspera, ResultTLV{tlvIngresarMap, MensajeErrorTLVNoCumpleLongitudMinima})
 
 	for _, c := range []struct {
 		ingresa []byte
@@ -96,9 +89,7 @@ func TestLargoTLVNoEsValido(t *testing.T) {
 
 	tlvEspera := []ResultTLV{}
 	tlvIngresarByte := []byte{49, 88, 65, 48, 53, 65, 66, 51, 57, 56, 55, 54, 53, 85, 74, 49, 48, 50, 78, 50, 51, 48, 48} //1XA05AB398765UJ102N2300
-
-	tlvIngresarMap := map[string]string{"largo": "", "numeroCampo": "", "tipoDato": "", "valor": ""}
-	tlvEspera = append(tlvEspera, ResultTLV{tlvIngresarMap, "Error en el largo del TLV"})
+	tlvEspera = append(tlvEspera, ResultTLV{tlvIngresarMap, MensajeErrorLargoTLV})
 
 	for _, c := range []struct {
 		ingresa []byte
@@ -119,9 +110,7 @@ func TestTipoDatoTLVNoEsValido(t *testing.T) {
 
 	tlvEspera := []ResultTLV{}
 	tlvIngresarByte := []byte{49, 49, 88, 48, 53, 88, 66, 51, 57, 56, 55, 54, 53, 85, 74, 49, 48, 50, 78, 50, 51, 48, 48} //11X05AB398765UJ102N2300
-
-	tlvIngresarMap := map[string]string{"largo": "", "numeroCampo": "", "tipoDato": "", "valor": ""}
-	tlvEspera = append(tlvEspera, ResultTLV{tlvIngresarMap, "No es valido el Tipo dato TLV"})
+	tlvEspera = append(tlvEspera, ResultTLV{tlvIngresarMap, MensajeErrorNoEsValidoTipoDatoTLV})
 
 	for _, c := range []struct {
 		ingresa []byte
@@ -142,9 +131,7 @@ func TestElNumeroCampoTipoTLVNoEsNumero(t *testing.T) {
 
 	tlvEspera := []ResultTLV{}
 	tlvIngresarByte := []byte{49, 49, 65, 88, 88, 88, 66, 51, 57, 56, 55, 54, 53, 85, 74, 49, 48, 50, 78, 50, 51, 48, 48} //11AXXAB398765UJ102N2300
-
-	tlvIngresarMap := map[string]string{"largo": "", "numeroCampo": "", "tipoDato": "", "valor": ""}
-	tlvEspera = append(tlvEspera, ResultTLV{tlvIngresarMap, "El numero de campo de tipo del TLV no es un número"})
+	tlvEspera = append(tlvEspera, ResultTLV{tlvIngresarMap, MensajeErrorNumeroCampoTipoTLVNoEsNumero})
 
 	for _, c := range []struct {
 		ingresa []byte
@@ -165,9 +152,7 @@ func TestElValorTLVNoEsAlfanumerico(t *testing.T) {
 
 	tlvEspera := []ResultTLV{}
 	tlvIngresarByte := []byte{49, 49, 65, 48, 53, 49, 50, 51, 52, 53, 54, 55, 56, 57, 49, 48, 48, 50, 78, 50, 51, 48, 48} //11A051234567891002N2300
-
-	tlvIngresarMap := map[string]string{"largo": "", "numeroCampo": "", "tipoDato": "", "valor": ""}
-	tlvEspera = append(tlvEspera, ResultTLV{tlvIngresarMap, "El valor del TLV no es alfanumérico"})
+	tlvEspera = append(tlvEspera, ResultTLV{tlvIngresarMap, MensajeErrorElValorTLVNoEsAlfanumerico})
 
 	for _, c := range []struct {
 		ingresa []byte
@@ -188,9 +173,7 @@ func TestElValorTLVNoEsNumerico(t *testing.T) {
 
 	tlvEspera := []ResultTLV{}
 	tlvIngresarByte := []byte{49, 49, 78, 48, 53, 65, 83, 68, 70, 71, 72, 74, 75, 76, 79, 73, 48, 50, 78, 50, 51, 48, 48} //11A051234567891002N2300
-
-	tlvIngresarMap := map[string]string{"largo": "", "numeroCampo": "", "tipoDato": "", "valor": ""}
-	tlvEspera = append(tlvEspera, ResultTLV{tlvIngresarMap, "El valor del TLV no es numérico"})
+	tlvEspera = append(tlvEspera, ResultTLV{tlvIngresarMap, MensajeErrorElValorTLVNoEsNumerico})
 
 	for _, c := range []struct {
 		ingresa []byte
