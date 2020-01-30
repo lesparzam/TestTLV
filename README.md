@@ -10,7 +10,7 @@ Para compilar el proyecto es necesario tener instalado **go1.13.6**, una vez rea
 
 El proyecto contiene dos archivos en la carpeta **src**:
 
-* **main.go** : para inspeccionar un TLV es necesario reemplazar en este archivo los valores de la variable **tlv** del método **main()** por el tlv a inspeccionar.
+* **main.go** : para inspeccionar un TLV es necesario reemplazar en este archivo la variable de entrada del método **LeerTlv(tlv []byte)** en el método **main()** por el tlv a inspeccionar.
 
 * **main_test.go** : contiene métodos para realizar algunas pruebas de la funciones contenidas en el archivo **main.go** 
 
